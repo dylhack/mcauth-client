@@ -20,7 +20,7 @@ public class Client {
         this.token = token;
     }
 
-    public boolean isValid(Player player) {
+    public JSONObject getIsValid(Player player) {
         String uuid = player.getUniqueId().toString().replace("-", "");
         String body = new JSONStringer()
                 .object()
@@ -34,10 +34,7 @@ public class Client {
                 body
         );
 
-        if (response != null)
-            return response.getBoolean("valid");
-        else
-            return true;
+        return response;
     }
 
     private JSONObject doRequest(String target, String body) {

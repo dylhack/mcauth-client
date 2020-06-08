@@ -4,6 +4,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.json.JSONObject;
 
 public class MCListener implements Listener {
     private final Client client;
@@ -13,10 +14,22 @@ public class MCListener implements Listener {
     @EventHandler
     public void onMemberJoin(PlayerJoinEvent ev) {
         Player player = ev.getPlayer();
-        boolean isValid = this.client.isValid(player);
+        JSONObject isValidRes = this.client.getIsValid(player);
+
+        boolean isValid = isValidRes.getBoolean("valid");
+        String reason = isValidRes.getString("reason");
 
         if (!isValid) {
-            player.kickPlayer("Please authenticate your Minecraft account via Discord.");
+            String kickReason;
+
+            if (reason.equals("no_link")) {
+                kickReason = "Please link your Minecraft account via Discord";
+            } else {
+                kickReason = "To be able to join you must be a Tier 3 Member.";
+            }
+
+            player.kickPlayer(kickReason);
         }
+
     }
 }
