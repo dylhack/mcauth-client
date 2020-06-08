@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 
 public class Client {
@@ -20,7 +22,7 @@ public class Client {
         this.token = token;
     }
 
-    public JSONObject getIsValid(Player player) {
+    public JSONObject getIsValid(Player player) throws IOException {
         String uuid = player.getUniqueId().toString().replace("-", "");
         String body = new JSONStringer()
                 .object()
@@ -29,39 +31,31 @@ public class Client {
                 .endObject()
                 .toString();
 
-        JSONObject response = this.doRequest(
+        return this.doRequest(
                 this.baseURL + "/isValidPlayer",
                 body
         );
-
-        return response;
     }
 
-    private JSONObject doRequest(String target, String body) {
-        try {
-            URL url = new URL(target);
+    private JSONObject doRequest(String target, String body) throws IOException {
+        URL url = new URL(target);
 
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Authorization", "Bearer " + this.token);
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.setRequestProperty("User-Agent", "Spigot Plugin");
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Authorization", "Bearer " + this.token);
+        connection.setRequestProperty("Content-Type", "application/json");
+        connection.setRequestProperty("User-Agent", "Spigot Plugin");
 
 
-            connection.setDoOutput(true);
-            OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
-            writer.write(body.toString());
-            writer.flush();
-            writer.close();
+        connection.setDoOutput(true);
+        OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
+        writer.write(body);
+        writer.flush();
+        writer.close();
 
-            InputStream stream = connection.getInputStream();
+        InputStream stream = connection.getInputStream();
 
-            JSONTokener parsing = new JSONTokener(stream);
-            return new JSONObject(parsing);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+        JSONTokener parsing = new JSONTokener(stream);
+        return new JSONObject(parsing);
     }
 }

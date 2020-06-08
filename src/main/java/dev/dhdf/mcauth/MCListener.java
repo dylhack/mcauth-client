@@ -4,7 +4,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.IOException;
 
 public class MCListener implements Listener {
     private final Client client;
@@ -18,11 +21,12 @@ public class MCListener implements Listener {
             JSONObject isValidRes = this.client.getIsValid(player);
 
             boolean isValid = isValidRes.getBoolean("valid");
-            String reason = isValidRes.getString("reason");
+
 
             if (!isValid) {
                 String kickReason;
 
+                String reason = isValidRes.getString("reason");
                 if (reason.equals("no_link")) {
                     kickReason = "Please link your Minecraft account via Discord";
                 } else {
@@ -31,10 +35,10 @@ public class MCListener implements Listener {
 
                 player.kickPlayer(kickReason);
             }
-        } catch (Exception err) {
-            player.kickPlayer(
-                    "Failed to communicate with the authentication server."
-            );
+        } catch (IOException err) {
+            player.kickPlayer("Failed to connect to authentication servers.");
+        } catch (JSONException err) {
+            err.printStackTrace();
         }
     }
 }
