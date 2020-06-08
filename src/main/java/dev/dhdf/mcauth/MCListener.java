@@ -14,22 +14,27 @@ public class MCListener implements Listener {
     @EventHandler
     public void onMemberJoin(PlayerJoinEvent ev) {
         Player player = ev.getPlayer();
-        JSONObject isValidRes = this.client.getIsValid(player);
+        try {
+            JSONObject isValidRes = this.client.getIsValid(player);
 
-        boolean isValid = isValidRes.getBoolean("valid");
-        String reason = isValidRes.getString("reason");
+            boolean isValid = isValidRes.getBoolean("valid");
+            String reason = isValidRes.getString("reason");
 
-        if (!isValid) {
-            String kickReason;
+            if (!isValid) {
+                String kickReason;
 
-            if (reason.equals("no_link")) {
-                kickReason = "Please link your Minecraft account via Discord";
-            } else {
-                kickReason = "To be able to join you must be a Tier 3 Member.";
+                if (reason.equals("no_link")) {
+                    kickReason = "Please link your Minecraft account via Discord";
+                } else {
+                    kickReason = "To be able to join you must be a Tier 3 Member.";
+                }
+
+                player.kickPlayer(kickReason);
             }
-
-            player.kickPlayer(kickReason);
+        } catch (Exception err) {
+            player.kickPlayer(
+                    "Failed to communicate with the authentication server."
+            );
         }
-
     }
 }
