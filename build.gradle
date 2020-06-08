@@ -1,0 +1,25 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
+}
+
+group 'dev.dhdf'
+version '1.0.0'
+
+repositories {
+    mavenCentral()
+    maven {
+        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+
+        content {
+            includeGroup 'org.bukkit'
+        }
+    }
+}
+
+dependencies {
+    compile 'org.json:json:20190722'
+    compile 'org.bukkit:bukkit:1.15.2-R0.1-SNAPSHOT'
+}
+
+assemble.dependsOn shadowJar
