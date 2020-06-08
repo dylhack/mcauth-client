@@ -1,3 +1,8 @@
+## Introduction
+This is a plugin for [mc-discord-auth](https://github.com/dhghf/mc-discord-auth)
+for more details view that repository.
+
+
 ## Setup
  1. First compile
 ```shell script
