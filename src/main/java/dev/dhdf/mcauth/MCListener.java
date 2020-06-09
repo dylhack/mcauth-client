@@ -18,7 +18,7 @@ public class MCListener implements Listener {
     public void onMemberJoin(PlayerJoinEvent ev) {
         Player player = ev.getPlayer();
         try {
-            JSONObject isValidRes = this.client.getIsValid(player);
+            JSONObject isValidRes = this.client.isValidPlayer(player);
 
             boolean isValid = isValidRes.getBoolean("valid");
 

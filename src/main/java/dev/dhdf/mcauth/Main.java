@@ -6,7 +6,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class Main extends JavaPlugin {
     @Override
     public void onEnable() {
-        this.saveDefaultConfig();;
+        this.saveDefaultConfig();
 
         FileConfiguration config = this.getConfig();
 
@@ -16,7 +16,11 @@ public class Main extends JavaPlugin {
 
         Client client = new Client(address, port, token);
         MCListener listener = new MCListener(client);
+        AltCommands altCommands = new AltCommands(client);
 
         getServer().getPluginManager().registerEvents(listener, this);
+        this.getCommand("addalt").setExecutor(altCommands);
+        this.getCommand("remalt").setExecutor(altCommands);
+        this.getCommand("listalts").setExecutor(altCommands);
     }
 }

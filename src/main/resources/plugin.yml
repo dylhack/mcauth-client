@@ -3,3 +3,13 @@ version: '1.0.0'
 author: 'Dylan Hackworth'
 main: 'dev.dhdf.mcauth.Main'
 api-version: '1.15'
+commands:
+  addalt:
+    description: Add an alt account
+    usage: /addalt <PlayerName>
+  remalt:
+    description: Remove an alt account
+    usage: /remalt <PlayerName>
+  listalts:
+    description: List alt accounts of a person
+    usage: /listalts <PlayerName>
