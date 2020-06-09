@@ -19,7 +19,6 @@ public class MCListener implements Listener {
         Player player = ev.getPlayer();
         try {
             JSONObject isValidRes = this.client.isValidPlayer(player);
-
             boolean isValid = isValidRes.getBoolean("valid");
 
 
@@ -27,10 +26,13 @@ public class MCListener implements Listener {
                 String kickReason;
 
                 String reason = isValidRes.getString("reason");
+
                 if (reason.equals("no_link")) {
                     kickReason = "Please link your Minecraft account via Discord";
-                } else {
+                } else if (reason.equals("no_role")){
                     kickReason = "To be able to join you must be a Tier 3 Member.";
+                } else {
+                    kickReason = "Floor Gang - The server is currently under maintenance.";
                 }
 
                 player.kickPlayer(kickReason);
