@@ -1,3 +1,7 @@
+/**
+ * @LICENSE GPL-3.0
+ * @author Dylan Hackworth <dhpf@pm.me>
+ */
 package dev.dhdf.mcauth;
 
 import dev.dhdf.mcauth.types.AltAcc;

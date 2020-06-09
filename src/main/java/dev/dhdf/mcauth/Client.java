@@ -1,15 +1,16 @@
+/**
+ * @LICENSE GPL-3.0
+ * @author Dylan Hackworth <dhpf@pm.me>
+ */
 package dev.dhdf.mcauth;
 
 import dev.dhdf.mcauth.types.AltAcc;
 import org.bukkit.entity.Player;
 import org.json.*;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -23,6 +24,7 @@ public class Client {
     }
 
     /**
+     * This checks if the player that joined is authorized to be joining.
      * @link https://github.com/dhghf/mc-discord-auth/blob/master/docs/endpoints/Player%20Validation.md#post-isplayervalid
      * @param player The player being validated
      * @return JSONObject (see provided link)
@@ -74,6 +76,7 @@ public class Client {
 
     /**
      * This deletes a given alt account
+     * @link https://github.com/dhghf/mc-discord-auth/blob/master/docs/endpoints/Alt%20Accounts.md#delete-delalt
      * @param altName The name of the alt account to remove
      * @return JSONObject
      * @throws IOException If the HTTP request failed
@@ -94,6 +97,7 @@ public class Client {
     }
 
     /**
+     * This lists all the alt accounts under a given owner
      * @link https://github.com/dhghf/mc-discord-auth/blob/master/docs/endpoints/Alt%20Accounts.md#get-getaltsofowner
      * @param owner Alt account owner
      * @return ArrayList<AltAcc>
@@ -125,6 +129,9 @@ public class Client {
     ///////////////////
 
 
+    /**
+     * This builds the HttpURLConnection object
+     */
     private HttpURLConnection buildRequest(String target, String method) throws IOException {
         URL url = new URL(target);
 
@@ -137,6 +144,10 @@ public class Client {
         return connection;
     }
 
+    /**
+     * This handles all the HTTP GET requests
+     * @throws IOException If the HTTP request failed
+     */
     private JSONObject doGetRequest(String target) throws IOException {
         HttpURLConnection connection = buildRequest(target, "GET");
 
@@ -148,9 +159,13 @@ public class Client {
         } catch (JSONException e) {
             return new JSONObject();
         }
-
     }
 
+    /**
+     * This does all the HTTP requests that aren't related to GET requests
+     * @return JSONObject
+     * @throws IOException If the HTTP request failed
+     */
     private JSONObject doRequest(String target, String method, String body) throws IOException {
         HttpURLConnection connection = buildRequest(target, method);
 
