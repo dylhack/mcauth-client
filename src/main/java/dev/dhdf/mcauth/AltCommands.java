@@ -88,10 +88,10 @@ public class AltCommands implements CommandExecutor {
      * List alts of another player
      */
     private boolean listAlts(CommandSender sender, String[] args) {
-//        if (!sender.hasPermission("mc-discord-auth.listalts")) {
-//            sender.sendMessage(permComplaint);
-//            return true;
-//        }
+        if (!sender.hasPermission("mc-discord-auth.listalts")) {
+            sender.sendMessage(permComplaint);
+            return true;
+        }
 
         if (args.length > 0) {
             String owner = args[0];
