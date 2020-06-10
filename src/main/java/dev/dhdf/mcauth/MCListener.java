@@ -35,17 +35,26 @@ public class MCListener implements Listener {
                 String reason = isValidRes.getString("reason");
 
                 // They didn't link their Discord acc.
-                if (reason.equals("no_link")) {
-                    kickReason = "Please link your Minecraft account via Discord";
-                // They don't have the right perms to join
-                } else if (reason.equals("no_role")){
-                    kickReason = "To be able to join you must be a Tier 3 Member.";
-                // They're not admin during "maintenance mode"
-                } else if (reason.equals("auth_code")) {
-                    String authCode = isValidRes.getString("auth_code");
-                    kickReason = "Here is your auth code: \"" + authCode + "\"";
-                } else {
-                    kickReason = "Floor Gang - The server is currently under maintenance.";
+                switch (reason) {
+                    case "no_link":
+                        kickReason = "Please link your Minecraft account via Discord";
+                        // They don't have the right perms to join
+                        break;
+                    case "no_role":
+                        kickReason = "To be able to join you must be a Tier 3 Member.";
+                        // They're not admin during "maintenance mode"
+                        break;
+                    case "auth_code":
+                        String authCode = isValidRes.getString("auth_code");
+                        kickReason = "Here is your auth code: \"" + authCode + "\"";
+                        break;
+                    case "banned":
+                        kickReason = "Your Discord is banned from this Minecraft server";
+                        // last is "maintenance"
+                        break;
+                    default:
+                        kickReason = "Floor Gang - The server is currently under maintenance.";
+                        break;
                 }
 
                 player.kickPlayer(kickReason);
