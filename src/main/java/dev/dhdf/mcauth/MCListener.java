@@ -42,18 +42,21 @@ public class MCListener implements Listener {
                         break;
                     case "no_role":
                         kickReason = "To be able to join you must be a Tier 3 Member.";
-                        // They're not admin during "maintenance mode"
                         break;
                     case "auth_code":
                         String authCode = isValidRes.getString("auth_code");
-                        kickReason = "Here is your auth code: \"" + authCode + "\"";
+                        kickReason = "Here is your auth code: \"" + authCode + "\"\nUse \".mc auth " + authCode + "\" in the #server-signup channel of Discord";
                         break;
                     case "banned":
                         kickReason = "Your Discord is banned from this Minecraft server";
-                        // last is "maintenance"
+                        break;
+                    case "maintenance":
+                        // player is not an admin, and maintenance is enabled.
+                        kickReason = "Floor Gang - The server is currently under maintenance.";
                         break;
                     default:
-                        kickReason = "Floor Gang - The server is currently under maintenance.";
+                        // reason is unknown, perhaps the authentication server has returned an already formatted string?
+                        kickReason = "Floor Gang - \"" + reason + "\"";
                         break;
                 }
 
@@ -61,7 +64,7 @@ public class MCListener implements Listener {
             }
         } catch (IOException err) {
             // Kick if the authentication server is down
-            player.kickPlayer("Failed to connect to authentication servers.");
+            player.kickPlayer("Failed to connect to linking servers.");
         } catch (JSONException err) {
             // Something went wrong will accessing a response attribute.
             err.printStackTrace();
