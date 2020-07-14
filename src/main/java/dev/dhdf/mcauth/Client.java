@@ -32,17 +32,11 @@ public class Client {
      */
     public JSONObject isValidPlayer(Player player) throws IOException {
         String uuid = player.getUniqueId().toString().replace("-", "");
-        String body = new JSONStringer()
-                .object()
-                .key("player_id")
-                .value(uuid)
-                .endObject()
-                .toString();
 
         return this.doRequest(
-                this.baseURL + "/isValidPlayer",
+                this.baseURL + "/isValidPlayer/" + uuid,
                 "POST",
-                body
+                null
         );
     }
 
