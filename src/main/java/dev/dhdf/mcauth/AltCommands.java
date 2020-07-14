@@ -1,7 +1,3 @@
- /**
- * @LICENSE GPL-3.0
- * @author Dylan Hackworth <dhpf@pm.me>
- */
 package dev.dhdf.mcauth;
 
 import dev.dhdf.mcauth.types.AltAcc;
@@ -9,9 +5,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class AltCommands implements CommandExecutor {
     private static final String permComplaint = "You do not have permissions to run this command.";
@@ -24,16 +18,12 @@ public class AltCommands implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        switch (label) {
-            case "addalt":
-                return this.addAlt(sender, args);
-            case "remalt":
-                return this.remAlt(sender, args);
-            case "listalts":
-                return this.listAlts(sender, args);
-            default:
-                return false;
-        }
+        return switch (label) {
+            case "addalt" -> this.addAlt(sender, args);
+            case "remalt" -> this.remAlt(sender, args);
+            case "listalts" -> this.listAlts(sender, args);
+            default -> false;
+        };
     }
 
     /**
@@ -48,14 +38,9 @@ public class AltCommands implements CommandExecutor {
 
         if (args.length > 0) {
             String altAcc = args[0];
-            try {
-                this.client.addAltAccount(claimer, altAcc);
-                sender.sendMessage("Added account.");
-                return true;
-            } catch (IOException err) {
-                sender.sendMessage("Failed to add alt account, is that a valid player name?");
-                return false;
-            }
+            this.client.addAltAccount(claimer, altAcc)
+            .thenAccept(x -> sender.sendMessage("Added account."));
+            return true;
         } else {
             sender.sendMessage("Please provide a player name");
             return false;
@@ -74,12 +59,8 @@ public class AltCommands implements CommandExecutor {
         if (args.length > 0) {
             String altName = args[0];
 
-            try {
-                this.client.remAltAccount(altName);
-                sender.sendMessage("Removed account.");
-            } catch (IOException err) {
-                sender.sendMessage("Failed to remove account, is the auth server up?");
-            }
+            this.client.remAltAccount(altName)
+                .thenAccept(x -> sender.sendMessage("Removed account."));
 
             return true;
         } else {
@@ -100,18 +81,16 @@ public class AltCommands implements CommandExecutor {
         if (args.length > 0) {
             String owner = args[0];
 
-            try {
-                ArrayList<AltAcc> alts = client.listAltAccounts(owner);
-                StringBuilder list = new StringBuilder(owner + "'s claimed alts:\n");
+            client.listAltAccounts(owner)
+                .thenAccept(alts -> {
+                    StringBuilder list = new StringBuilder(owner + "'s claimed alts:\n");
 
-                for (AltAcc acc : alts) {
-                    list.append(" - ").append(acc.altName).append("\n");
-                }
+                    for (AltAcc acc : alts) {
+                        list.append(" - ").append(acc.altName).append("\n");
+                    }
 
-                sender.sendMessage(list.toString());
-            } catch (IOException err) {
-                sender.sendMessage("Something went wrong");
-            }
+                    sender.sendMessage(list.toString());
+                });
             return true;
         } else {
             return false;
