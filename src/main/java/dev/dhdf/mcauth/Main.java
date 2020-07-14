@@ -1,7 +1,3 @@
-/**
- * @LICENSE GPL-3.0
- * @author Dylan Hackworth <dhpf@pm.me>
- */
 package dev.dhdf.mcauth;
 
 import org.bukkit.configuration.file.FileConfiguration;
@@ -10,8 +6,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class Main extends JavaPlugin {
     @Override
     public void onEnable() {
-        this.saveDefaultConfig();
-
         FileConfiguration config = this.getConfig();
 
         String address = config.getString("address", "127.0.0.1");

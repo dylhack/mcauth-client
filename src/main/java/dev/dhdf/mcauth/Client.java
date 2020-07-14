@@ -3,7 +3,6 @@ package dev.dhdf.mcauth;
 import dev.dhdf.mcauth.types.AltAcc;
 import org.bukkit.entity.Player;
 import org.json.*;
-import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;

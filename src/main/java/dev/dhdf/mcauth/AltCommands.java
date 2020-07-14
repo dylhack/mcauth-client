@@ -5,7 +5,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import java.io.IOException;
 
 public class AltCommands implements CommandExecutor {
     private static final String permComplaint = "You do not have permissions to run this command.";
@@ -18,12 +17,16 @@ public class AltCommands implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        return switch (label) {
-            case "addalt" -> this.addAlt(sender, args);
-            case "remalt" -> this.remAlt(sender, args);
-            case "listalts" -> this.listAlts(sender, args);
-            default -> false;
-        };
+        switch (label) {
+            case "addalt":
+                return this.addAlt(sender, args);
+            case "remalt":
+                return this.remAlt(sender, args);
+            case "listalts":
+                return this.listAlts(sender, args);
+            default:
+                return false;
+        }
     }
 
     /**
