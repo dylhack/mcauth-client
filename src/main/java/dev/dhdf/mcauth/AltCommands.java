@@ -24,8 +24,10 @@ public class AltCommands implements CommandExecutor {
                 return this.addAlt(sender, args);
             case "remalt":
                 return this.remAlt(sender, args);
+            case "getalts":
+                return this.getAlts(sender, args);
             case "listalts":
-                return this.listAlts(sender, args);
+                return this.listAlts(sender);
             default:
                 return false;
         }
@@ -110,8 +112,8 @@ public class AltCommands implements CommandExecutor {
     /**
      * List alts of another player
      */
-    private boolean listAlts(CommandSender sender, String[] args) {
-        if (!sender.hasPermission("mcauth.listalts") && !Main.debug) {
+    private boolean getAlts(CommandSender sender, String[] args) {
+        if (!sender.hasPermission("mcauth.getalts") && !Main.debug) {
             sender.sendMessage(permComplaint);
             return true;
         }
@@ -120,10 +122,10 @@ public class AltCommands implements CommandExecutor {
             String owner = args[0];
 
             try {
-                client.listAltAccounts(owner)
+                client.getAltsOf(owner)
                         .thenAcceptAsync(response -> {
                             JSONObject result = new JSONObject(response.body());
-                            if (result.getString("errcode") != null) {
+                            if (result.has("errcode")) {
                                 String errorMessage = result.getString("message");
                                 sender.sendMessage(errorMessage);
                                 return;
@@ -150,6 +152,45 @@ public class AltCommands implements CommandExecutor {
         } else {
             return false;
         }
+    }
+
+    public boolean listAlts(CommandSender sender) {
+        if (!sender.hasPermission("mcauth.listalts") && !Main.debug) {
+            sender.sendMessage(permComplaint);
+            return true;
+        }
+
+        try {
+            client.listAlts()
+                    .thenAcceptAsync(response -> {
+                        JSONObject result = new JSONObject(response.body());
+                        if (result.has("errcode")) {
+                            String errorMessage = result.getString("message");
+                            sender.sendMessage(errorMessage);
+                            return;
+                        }
+
+                        JSONArray alts = result.getJSONArray("alt_accs");
+                        StringBuilder list = new StringBuilder("Alt Accounts:\n");
+
+                        for (int i = 0; i < alts.length(); ++i) {
+                            JSONObject rawAltAcc = (JSONObject) alts.get(i);
+                            String altName = rawAltAcc.getString("alt_name");
+                            String ownerUUID = rawAltAcc.getString("alt_owner");
+
+                            list.append(
+                                    String.format(" - %s (owner: %s)", altName, ownerUUID)
+                            ).append("\n");
+                        }
+
+                        sender.sendMessage(list.toString());
+                    }).join();
+        } catch (Exception e) {
+            sender.sendMessage("Failed to communicate with mcauth to get all the accounts.");
+            System.out.println("Failed to communicate with mcauth, is the configuration correct?");
+            e.printStackTrace();
+        }
+        return true;
     }
 
 }

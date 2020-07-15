@@ -66,8 +66,12 @@ public class Client {
      * @return ArrayList<AltAcc>
      * @throws JSONException If the server doesn't recognize the owner
      */
-    public CompletableFuture<HttpResponse<String>> listAltAccounts(String owner) {
+    public CompletableFuture<HttpResponse<String>> getAltsOf(String owner) {
         return this.doGetRequest(this.baseURL + "/alts/" + owner);
+    }
+
+    public CompletableFuture<HttpResponse<String>> listAlts() {
+        return this.doGetRequest(this.baseURL + "/alts");
     }
 
     /* Utility Methods */

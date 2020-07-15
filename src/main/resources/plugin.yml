@@ -10,6 +10,9 @@ commands:
   remalt:
     description: Remove an alt account
     usage: /remalt <PlayerName>
-  listalts:
+  getalts:
     description: List alt accounts of a person
-    usage: /listalts <PlayerName>
+    usage: /getalts <PlayerName>
+  listalts:
+    description: List all the alt accounts
+    usage: /listalts
