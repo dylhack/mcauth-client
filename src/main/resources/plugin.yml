@@ -1,5 +1,5 @@
-name: 'mc-discord-auth'
-version: '1.0.0'
+name: 'mcauth'
+version: '2.0.0'
 author: 'Dylan Hackworth'
 main: 'dev.dhdf.mcauth.Main'
 api-version: '1.15'
