@@ -1,5 +1,5 @@
 ## Introduction
-This is a plugin for [mc-discord-auth](https://github.com/dhghf/mc-discord-auth)
+This is a plugin for [mcauth](https://github.com/dhghf/mcauth)
 for more details view that repository.
 
 
@@ -8,7 +8,7 @@ for more details view that repository.
 ```shell script
 gradle build
 
-# Move build/lib/mc-discord-auth-client-1.0.0-all.jar 
+# Move build/lib/mcauth-client-2.0.0-all.jar 
 # to your Spigot server plugins directory
 ```
  2. Run the Spigot server to initialize the default config
