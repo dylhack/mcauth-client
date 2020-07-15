@@ -1,13 +1,11 @@
 package dev.dhdf.mcauth;
 
-import dev.dhdf.mcauth.types.AltAcc;
 import org.bukkit.entity.Player;
 import org.json.*;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 
 public class Client {
@@ -27,15 +25,13 @@ public class Client {
      * @param player The player being validated
      * @return JSONObject (see provided link)
      */
-    public CompletableFuture<JSONObject> isValidPlayer(Player player) {
+    public CompletableFuture<HttpResponse<String>> verifyPlayer(Player player) {
         String uuid = player.getUniqueId().toString().replace("-", "");
 
-        return this.doGetRequest(this.baseURL + "/isValidPlayer/" + uuid);
+        return this.doGetRequest(this.baseURL + "/verify/" + uuid);
     }
 
-    /////////////////////////
-    // Alt Account Management
-    /////////////////////////
+    /* Alt Account Management */
 
     /**
      * @link https://github.com/dhghf/mc-discord-auth/blob/master/docs/endpoints/Alt%20Accounts.md#post-newalt
@@ -43,20 +39,10 @@ public class Client {
      * @param altName The name of the alt account being claimed
      * @return JSONObject
      */
-    public CompletableFuture<JSONObject> addAltAccount(Player owner, String altName) {
-        String body = new JSONStringer()
-                .object()
-                .key("player_name")
-                .value(altName)
-                .key("owner")
-                .value(owner.getName())
-                .endObject()
-                .toString();
-
+    public CompletableFuture<HttpResponse<String>> addAltAccount(Player owner, String altName) {
         return this.doRequest(
-                this.baseURL + "/newAlt",
-                "POST",
-                body
+                this.baseURL + String.format("/alts/%s/%s", owner.getName(), altName),
+                "POST"
         );
     }
 
@@ -66,18 +52,10 @@ public class Client {
      * @param altName The name of the alt account to remove
      * @return JSONObject
      */
-    public CompletableFuture<JSONObject> remAltAccount(String altName) {
-        String body = new JSONStringer()
-                .object()
-                .key("player_name")
-                .value(altName)
-                .endObject()
-                .toString();
-
+    public CompletableFuture<HttpResponse<String>> remAltAccount(String altName) {
         return this.doRequest(
-                this.baseURL + "/delAlt",
-                "DELETE",
-                body
+                this.baseURL + "/alts/" + altName,
+                "DELETE"
         );
     }
 
@@ -88,62 +66,39 @@ public class Client {
      * @return ArrayList<AltAcc>
      * @throws JSONException If the server doesn't recognize the owner
      */
-    public CompletableFuture<ArrayList<AltAcc>> listAltAccounts(String owner) throws JSONException {
-        return this.doGetRequest(this.baseURL + "/getAltsOf/" + owner)
-                .thenApply(result -> {
-                    ArrayList<AltAcc> accounts = new ArrayList<>();
-                    JSONArray alts = result.getJSONArray("alt_accs");
-
-                    for (int i = 0; i < alts.length(); ++i) {
-                        JSONObject rawAltAcc = (JSONObject) alts.get(i);
-                        String altName = rawAltAcc.getString("alt_name");
-                        String altUUID = rawAltAcc.getString("alt_id");
-                        AltAcc altAcc = new AltAcc(altName, altUUID, owner);
-
-                        accounts.add(altAcc);
-                    }
-
-                    return accounts;
-                });
-
+    public CompletableFuture<HttpResponse<String>> listAltAccounts(String owner) {
+        return this.doGetRequest(this.baseURL + "/alts/" + owner);
     }
 
-
-    ///////////////////
-    // Utility Methods
-    ///////////////////
-
-
+    /* Utility Methods */
 
     /**
      * This handles all the HTTP GET requests
      */
-    private CompletableFuture<JSONObject> doGetRequest(String target) {
+    private CompletableFuture<HttpResponse<String>> doGetRequest(String target) {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(target))
                 .header("Content-Type", "application/json")
                 .header("User-Agent", "Spigot Plugin")
-                .header("Authorization", "Bearer " + this.token)
-                .method("GET", null)
+                .header("Authorization", this.token)
+                .GET()
                 .build();
-        return client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                .thenApply(response -> new JSONObject(response.body()));
+        return client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 
     /**
      * This does all the HTTP requests that aren't related to GET requests
      * @return JSONObject
      */
-    private CompletableFuture<JSONObject> doRequest(String target, String method, String body) {
+    private CompletableFuture<HttpResponse<String>> doRequest(String target, String method) {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(target))
                 .header("Content-Type", "application/json")
                 .header("User-Agent", "Spigot Plugin")
-                .header("Authorization", "Bearer " + this.token)
-                .method(method, HttpRequest.BodyPublishers.ofString(body))
+                .header("Authorization", this.token)
+                .method(method, HttpRequest.BodyPublishers.ofString(""))
                 .build();
 
-        return client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                .thenApply(response -> new JSONObject(response.body()));
+        return client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 }
