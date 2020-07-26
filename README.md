@@ -24,7 +24,7 @@ The first time running your server with the plugin in your plugin's folder, it
 will generate a new default config. Here is a reference:
 ```yaml
 address: "127.0.0.1" # Where your MCAuth instance is located
-port: 3001 			 # MCAuth instance webserver port (See MCAuth's config.yml)
-token: ""			 # MCAuth web server token (See MCAuth's config.yml)	
-kick_delay: 6		 # Kick delay in seconds
+port: 3001           # MCAuth instance webserver port (See MCAuth's config.yml)
+token: ""            # MCAuth web server token (See MCAuth's config.yml)	
+kick_delay: 6        # Kick delay in seconds
 ```
