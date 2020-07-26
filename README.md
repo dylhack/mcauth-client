@@ -28,3 +28,14 @@ port: 3001           # MCAuth instance webserver port (See MCAuth's config.yml)
 token: ""            # MCAuth web server token (See MCAuth's config.yml)	
 kick_delay: 6        # Kick delay in seconds
 ```
+
+## 4. Setup Complete
+Your server is now protected, just make sure MCAuth server is running otherwise
+players will not be able to join
+
+
+# Versioning
+`x.y.z`
+ - `x` MCAuth version supported
+ - `y` A minor change, an important plugin-only change was made
+ - `z` A patch, an insignificant change
