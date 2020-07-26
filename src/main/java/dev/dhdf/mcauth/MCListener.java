@@ -12,17 +12,19 @@ import org.json.JSONObject;
 public class MCListener implements Listener {
     private final Client client;
     private final Plugin plugin;
+    private final long kickDelay;
 
-    public MCListener(Client client, Plugin plugin) {
+    public MCListener(Client client, Plugin plugin, long kickDelay) {
         this.client = client;
         this.plugin = plugin;
+        this.kickDelay = kickDelay;
     }
 
     private void kick(Player player, String reason) {
         Bukkit.getScheduler().runTaskLater(this.plugin, new KickTask(
                 reason,
                 player
-        ), 20);
+        ), this.kickDelay);
     }
 
     /**
