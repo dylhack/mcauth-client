@@ -33,6 +33,13 @@ kick_delay: 6        # Kick delay in seconds
 Your server is now protected, just make sure MCAuth server is running otherwise
 players will not be able to join
 
+## Permission Nodes
+```
+mcauth.addalt
+mcauth.remalt
+mcauth.getalts
+mcauth.listalts
+```
 
 # Versioning
 `x.y.z`

@@ -37,7 +37,7 @@ public class AltCommands implements CommandExecutor {
      * Add a given alt account
      */
     private boolean addAlt(CommandSender sender, String[] args) {
-        if (!sender.hasPermission("mcauth.addalt") && !Main.debug) {
+        if (!sender.hasPermission("mcauth.addalt")) {
             sender.sendMessage(permComplaint);
             return true;
         }
@@ -75,7 +75,7 @@ public class AltCommands implements CommandExecutor {
      * Remove a given alt account
      */
     private boolean remAlt(CommandSender sender, String[] args) {
-        if (!sender.hasPermission("mcauth.remalt") && !Main.debug) {
+        if (!sender.hasPermission("mcauth.remalt")) {
             sender.sendMessage(permComplaint);
             return true;
         }
@@ -113,7 +113,7 @@ public class AltCommands implements CommandExecutor {
      * List alts of another player
      */
     private boolean getAlts(CommandSender sender, String[] args) {
-        if (!sender.hasPermission("mcauth.getalts") && !Main.debug) {
+        if (!sender.hasPermission("mcauth.getalts")) {
             sender.sendMessage(permComplaint);
             return true;
         }
@@ -155,7 +155,7 @@ public class AltCommands implements CommandExecutor {
     }
 
     public boolean listAlts(CommandSender sender) {
-        if (!sender.hasPermission("mcauth.listalts") && !Main.debug) {
+        if (!sender.hasPermission("mcauth.listalts")) {
             sender.sendMessage(permComplaint);
             return true;
         }

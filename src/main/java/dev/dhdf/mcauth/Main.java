@@ -4,8 +4,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Main extends JavaPlugin {
-    public static final boolean debug = false;
-
     @Override
     public void onEnable() {
         saveDefaultConfig();
@@ -24,5 +22,6 @@ public class Main extends JavaPlugin {
         this.getCommand("addalt").setExecutor(altCommands);
         this.getCommand("remalt").setExecutor(altCommands);
         this.getCommand("listalts").setExecutor(altCommands);
+        this.getCommand("getalts").setExecutor(altCommands);
     }
 }
