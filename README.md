@@ -16,7 +16,7 @@ $ gradle build
 ```
 
 ## 2. Add to Your Server
-The build output is located in `build/lib/mcauth-client-2.0.0-all.jar` copy it
+The build output is located in `build/libs/mcauth-client-2.0.0-all.jar` copy it
 to your server plugin's folder.
 
 ## 3. Configure
