@@ -11,7 +11,7 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 
 public class Client {
-    private final static Duration timeout = Duration.ofSeconds(20);
+    private final static Duration timeout = Duration.ofSeconds(15);
     private final String baseURL;
     private final String token;
     private final HttpClient client;
@@ -103,8 +103,8 @@ public class Client {
      */
     private HttpResponse<String> doRequest(String target, String method) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(target))
                 .timeout(Client.timeout)
+                .uri(URI.create(target))
                 .header("Content-Type", "application/json")
                 .header("User-Agent", "Spigot Plugin")
                 .header("Authorization", this.token)
