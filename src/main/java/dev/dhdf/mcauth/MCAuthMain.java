@@ -17,7 +17,7 @@ public class MCAuthMain extends JavaPlugin {
             int port = config.getInt("port", 3001);
 
             Client client = new Client(address, port, token);
-            MCListener listener = new MCListener(client, this, kickDelay);
+            MCListener listener = new MCListener(client);
             AltCommands altCommands = new AltCommands(client);
 
             getServer().getPluginManager().registerEvents(listener, this);
@@ -25,8 +25,6 @@ public class MCAuthMain extends JavaPlugin {
             this.getCommand("remalt").setExecutor(altCommands);
             this.getCommand("listalts").setExecutor(altCommands);
             this.getCommand("getalts").setExecutor(altCommands);
-
-            getLogger().fine("MCAuth is loaded.");
         });
         thread.start();
     }
