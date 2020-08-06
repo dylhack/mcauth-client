@@ -1,14 +1,15 @@
+![Build](https://github.com/dhghf/mcauth-client/workflows/Gradle%20Build/badge.svg?branch=production)
+
 # MCAuth Client
 This is the Minecraft plugin for [MCAuth](https://github.com/dhghf/mcauth). 
 Minecraft server owners must configure and setup their own MCAuth instance
 before adding this plugin.
 
-## Requirements
- * JRE 11+ (for running)
- * JDK 11+ (for compiling)
- * [Gradle 6.4+](https://gradle.org/) (for compiling)
 
 # Setup
+
+## Requirements
+JRE 11 or above is required to run this plugin on a Minecraft server.
 
 ## 1. Download
 Download the latest mcauth-client.jar from [releases](https://github.com/dhghf/mcauth-client/releases/latest)
