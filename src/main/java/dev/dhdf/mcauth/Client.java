@@ -90,7 +90,7 @@ public class Client {
                 .timeout(Client.timeout)
                 .uri(URI.create(target))
                 .header("Content-Type", "application/json")
-                .header("User-Agent", "Spigot Plugin")
+                .header("User-Agent", "MCAuth Client")
                 .header("Authorization", this.token)
                 .GET()
                 .build();
@@ -106,7 +106,7 @@ public class Client {
                 .timeout(Client.timeout)
                 .uri(URI.create(target))
                 .header("Content-Type", "application/json")
-                .header("User-Agent", "Spigot Plugin")
+                .header("User-Agent", "MCAuth Client")
                 .header("Authorization", this.token)
                 .method(method, HttpRequest.BodyPublishers.ofString(""))
                 .build();
