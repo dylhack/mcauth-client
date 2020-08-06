@@ -3,7 +3,8 @@ package dev.dhdf.mcauth;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class Main extends JavaPlugin {
+public class MCAuthMain extends JavaPlugin {
+    @SuppressWarnings("ConstantConditions")
     @Override
     public void onEnable() {
         Thread thread = new Thread(() -> {
