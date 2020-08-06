@@ -2,11 +2,12 @@ package dev.dhdf.mcauth;
 
 import org.bukkit.entity.Player;
 import org.json.*;
+
+import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.concurrent.CompletableFuture;
 
 public class Client {
     private final String baseURL;
@@ -21,11 +22,12 @@ public class Client {
 
     /**
      * This checks if the player that joined is authorized to be joining.
-     * @link https://github.com/dhghf/mc-discord-auth/blob/master/docs/endpoints/Player%20Validation.md#post-isplayervalid
+     *
      * @param player The player being validated
      * @return JSONObject (see provided link)
+     * @link https://github.com/dhghf/mc-discord-auth/blob/master/docs/endpoints/Player%20Validation.md#post-isplayervalid
      */
-    public CompletableFuture<HttpResponse<String>> verifyPlayer(Player player) {
+    public HttpResponse<String> verifyPlayer(Player player) throws IOException, InterruptedException {
         String uuid = player.getUniqueId().toString().replace("-", "");
 
         return this.doGetRequest(this.baseURL + "/verify/" + uuid);
@@ -34,12 +36,12 @@ public class Client {
     /* Alt Account Management */
 
     /**
-     * @link https://github.com/dhghf/mc-discord-auth/blob/master/docs/endpoints/Alt%20Accounts.md#post-newalt
-     * @param owner The owner claiming the alt account
+     * @param owner   The owner claiming the alt account
      * @param altName The name of the alt account being claimed
      * @return JSONObject
+     * @link https://github.com/dhghf/mc-discord-auth/blob/master/docs/endpoints/Alt%20Accounts.md#post-newalt
      */
-    public CompletableFuture<HttpResponse<String>> addAltAccount(Player owner, String altName) {
+    public HttpResponse<String> addAltAccount(Player owner, String altName) throws IOException, InterruptedException {
         return this.doRequest(
                 this.baseURL + String.format("/alts/%s/%s", owner.getName(), altName),
                 "POST"
@@ -48,11 +50,12 @@ public class Client {
 
     /**
      * This deletes a given alt account
-     * @link https://github.com/dhghf/mc-discord-auth/blob/master/docs/endpoints/Alt%20Accounts.md#delete-delalt
+     *
      * @param altName The name of the alt account to remove
      * @return JSONObject
+     * @link https://github.com/dhghf/mc-discord-auth/blob/master/docs/endpoints/Alt%20Accounts.md#delete-delalt
      */
-    public CompletableFuture<HttpResponse<String>> remAltAccount(String altName) {
+    public HttpResponse<String> remAltAccount(String altName) throws IOException, InterruptedException {
         return this.doRequest(
                 this.baseURL + "/alts/" + altName,
                 "DELETE"
@@ -61,16 +64,17 @@ public class Client {
 
     /**
      * This lists all the alt accounts under a given owner
-     * @link https://github.com/dhghf/mc-discord-auth/blob/master/docs/endpoints/Alt%20Accounts.md#get-getaltsofowner
+     *
      * @param owner Alt account owner
      * @return ArrayList<AltAcc>
      * @throws JSONException If the server doesn't recognize the owner
+     * @link https://github.com/dhghf/mc-discord-auth/blob/master/docs/endpoints/Alt%20Accounts.md#get-getaltsofowner
      */
-    public CompletableFuture<HttpResponse<String>> getAltsOf(String owner) {
+    public HttpResponse<String> getAltsOf(String owner) throws IOException, InterruptedException {
         return this.doGetRequest(this.baseURL + "/alts/" + owner);
     }
 
-    public CompletableFuture<HttpResponse<String>> listAlts() {
+    public HttpResponse<String> listAlts() throws IOException, InterruptedException {
         return this.doGetRequest(this.baseURL + "/alts");
     }
 
@@ -79,7 +83,7 @@ public class Client {
     /**
      * This handles all the HTTP GET requests
      */
-    private CompletableFuture<HttpResponse<String>> doGetRequest(String target) {
+    private HttpResponse<String> doGetRequest(String target) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(target))
                 .header("Content-Type", "application/json")
@@ -87,14 +91,14 @@ public class Client {
                 .header("Authorization", this.token)
                 .GET()
                 .build();
-        return client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     /**
      * This does all the HTTP requests that aren't related to GET requests
      * @return JSONObject
      */
-    private CompletableFuture<HttpResponse<String>> doRequest(String target, String method) {
+    private HttpResponse<String> doRequest(String target, String method) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(target))
                 .header("Content-Type", "application/json")
@@ -103,6 +107,6 @@ public class Client {
                 .method(method, HttpRequest.BodyPublishers.ofString(""))
                 .build();
 
-        return client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 }
