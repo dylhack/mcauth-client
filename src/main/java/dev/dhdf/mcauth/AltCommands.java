@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import java.net.http.HttpResponse;
 
 public class AltCommands implements CommandExecutor {
     private static final String permComplaint = "You do not have permissions to run this command.";
@@ -46,19 +47,14 @@ public class AltCommands implements CommandExecutor {
         if (args.length > 0) {
             String altAcc = args[0];
             try {
-                this.client.addAltAccount(claimer, altAcc)
-                        .thenAcceptAsync(response -> {
-                            System.out.println(response.body());
-                            try {
-                                JSONObject error = new JSONObject(response.body());
-                                String errorMessage = error.getString("message");
+                HttpResponse<String> response = this.client.addAltAccount(claimer, altAcc);
+                System.out.println(response.body());
+                JSONObject error = new JSONObject(response.body());
+                String errorMessage = error.getString("message");
 
-                                sender.sendMessage(errorMessage);
-                            } catch (JSONException e) {
-                                sender.sendMessage("Added account.");
-                            }
-                        })
-                        .join();
+                sender.sendMessage(errorMessage);
+            } catch (JSONException e) {
+                sender.sendMessage("Added account.");
             } catch (Exception err) {
                 sender.sendMessage("Failed to tell mcauth to add that account.");
                 System.out.println("Failed to communicate with mcauth, is the configuration correct?");
@@ -84,24 +80,18 @@ public class AltCommands implements CommandExecutor {
             String altName = args[0];
 
             try {
-                this.client.remAltAccount(altName)
-                        .thenAcceptAsync(response -> {
-                            try {
-                                JSONObject error = new JSONObject(response.body());
-                                String errorMessage = error.getString("message");
+                HttpResponse<String> response = this.client.remAltAccount(altName);
+                JSONObject error = new JSONObject(response.body());
+                String errorMessage = error.getString("message");
 
-                                sender.sendMessage(errorMessage);
-                            } catch (JSONException e) {
-                                sender.sendMessage("Removed account.");
-                            }
-                        })
-                        .join();
+                sender.sendMessage(errorMessage);
+            } catch (JSONException e) {
+                sender.sendMessage("Removed account.");
             } catch (Exception err) {
                 sender.sendMessage("Failed to tell mcauth to remove that account.");
                 System.out.println("Failed to communicate with mcauth, is the configuration correct?");
                 err.printStackTrace();
             }
-
             return true;
         } else {
             sender.sendMessage("Please provide a player name");
@@ -122,27 +112,25 @@ public class AltCommands implements CommandExecutor {
             String owner = args[0];
 
             try {
-                client.getAltsOf(owner)
-                        .thenAcceptAsync(response -> {
-                            JSONObject result = new JSONObject(response.body());
-                            if (result.has("errcode")) {
-                                String errorMessage = result.getString("message");
-                                sender.sendMessage(errorMessage);
-                                return;
-                            }
+                HttpResponse<String> response = client.getAltsOf(owner);
+                JSONObject result = new JSONObject(response.body());
+                if (result.has("errcode")) {
+                    String errorMessage = result.getString("message");
+                    sender.sendMessage(errorMessage);
+                    return true;
+                }
 
-                            JSONArray alts = result.getJSONArray("alt_accs");
-                            StringBuilder list = new StringBuilder(owner + "'s claimed alts:\n");
+                JSONArray alts = result.getJSONArray("alt_accs");
+                StringBuilder list = new StringBuilder(owner + "'s claimed alts:\n");
 
-                            for (int i = 0; i < alts.length(); ++i) {
-                                JSONObject rawAltAcc = (JSONObject) alts.get(i);
-                                String altName = rawAltAcc.getString("alt_name");
+                for (int i = 0; i < alts.length(); ++i) {
+                    JSONObject rawAltAcc = (JSONObject) alts.get(i);
+                    String altName = rawAltAcc.getString("alt_name");
 
-                                list.append(" - ").append(altName).append("\n");
-                            }
+                    list.append(" - ").append(altName).append("\n");
+                }
 
-                            sender.sendMessage(list.toString());
-                        }).join();
+                sender.sendMessage(list.toString());
             } catch (Exception e) {
                 sender.sendMessage("Failed to communicate with mcauth to list the alt accounts.");
                 System.out.println("Failed to communicate with mcauth, is the configuration correct?");
@@ -161,30 +149,28 @@ public class AltCommands implements CommandExecutor {
         }
 
         try {
-            client.listAlts()
-                    .thenAcceptAsync(response -> {
-                        JSONObject result = new JSONObject(response.body());
-                        if (result.has("errcode")) {
-                            String errorMessage = result.getString("message");
-                            sender.sendMessage(errorMessage);
-                            return;
-                        }
+            HttpResponse<String> response =  client.listAlts();
+            JSONObject result = new JSONObject(response.body());
+            if (result.has("errcode")) {
+                String errorMessage = result.getString("message");
+                sender.sendMessage(errorMessage);
+                return true;
+            }
 
-                        JSONArray alts = result.getJSONArray("alt_accs");
-                        StringBuilder list = new StringBuilder("Alt Accounts:\n");
+            JSONArray alts = result.getJSONArray("alt_accs");
+            StringBuilder list = new StringBuilder("Alt Accounts:\n");
 
-                        for (int i = 0; i < alts.length(); ++i) {
-                            JSONObject rawAltAcc = (JSONObject) alts.get(i);
-                            String altName = rawAltAcc.getString("alt_name");
-                            String ownerUUID = rawAltAcc.getString("alt_owner");
+            for (int i = 0; i < alts.length(); ++i) {
+                JSONObject rawAltAcc = (JSONObject) alts.get(i);
+                String altName = rawAltAcc.getString("alt_name");
+                String ownerUUID = rawAltAcc.getString("alt_owner");
 
-                            list.append(
-                                    String.format(" - %s (owner: %s)", altName, ownerUUID)
-                            ).append("\n");
-                        }
+                list.append(
+                        String.format(" - %s (owner: %s)", altName, ownerUUID)
+                ).append("\n");
+            }
 
-                        sender.sendMessage(list.toString());
-                    }).join();
+            sender.sendMessage(list.toString());
         } catch (Exception e) {
             sender.sendMessage("Failed to communicate with mcauth to get all the accounts.");
             System.out.println("Failed to communicate with mcauth, is the configuration correct?");

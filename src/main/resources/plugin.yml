@@ -1,7 +1,7 @@
 name: 'mcauth'
-version: '2.0.0'
+version: '2.1.0'
 author: 'Dylan Hackworth'
-main: 'dev.dhdf.mcauth.Main'
+main: 'dev.dhdf.mcauth.MCAuthMain'
 api-version: '1.15'
 commands:
   addalt:

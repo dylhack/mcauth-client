@@ -1,11 +1,6 @@
 package dev.dhdf.mcauth;
 
-import org.bukkit.Server;
 import org.bukkit.entity.Player;
-
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.UUID;
 
 public class KickTask implements Runnable {
     private final String reason;
