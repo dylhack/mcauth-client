@@ -8,8 +8,10 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.Duration;
 
 public class Client {
+    private final static Duration timeout = Duration.ofSeconds(20);
     private final String baseURL;
     private final String token;
     private final HttpClient client;
@@ -85,6 +87,7 @@ public class Client {
      */
     private HttpResponse<String> doGetRequest(String target) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
+                .timeout(Client.timeout)
                 .uri(URI.create(target))
                 .header("Content-Type", "application/json")
                 .header("User-Agent", "Spigot Plugin")
@@ -101,6 +104,7 @@ public class Client {
     private HttpResponse<String> doRequest(String target, String method) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(target))
+                .timeout(Client.timeout)
                 .header("Content-Type", "application/json")
                 .header("User-Agent", "Spigot Plugin")
                 .header("Authorization", this.token)
