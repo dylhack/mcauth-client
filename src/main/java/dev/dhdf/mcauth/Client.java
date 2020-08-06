@@ -8,14 +8,16 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.Duration;
 
 public class Client {
+    private final static Duration timeout = Duration.ofSeconds(15);
     private final String baseURL;
     private final String token;
     private final HttpClient client;
 
     public Client(String address, int port, String token) {
-        this.baseURL = "http://" + address + ":" + port;
+        this.baseURL = String.format("http://%s:%d", address, port);
         this.token = token;
         this.client = HttpClient.newHttpClient();
     }
@@ -85,9 +87,10 @@ public class Client {
      */
     private HttpResponse<String> doGetRequest(String target) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
+                .timeout(Client.timeout)
                 .uri(URI.create(target))
                 .header("Content-Type", "application/json")
-                .header("User-Agent", "Spigot Plugin")
+                .header("User-Agent", "MCAuth Client")
                 .header("Authorization", this.token)
                 .GET()
                 .build();
@@ -100,9 +103,10 @@ public class Client {
      */
     private HttpResponse<String> doRequest(String target, String method) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
+                .timeout(Client.timeout)
                 .uri(URI.create(target))
                 .header("Content-Type", "application/json")
-                .header("User-Agent", "Spigot Plugin")
+                .header("User-Agent", "MCAuth Client")
                 .header("Authorization", this.token)
                 .method(method, HttpRequest.BodyPublishers.ofString(""))
                 .build();

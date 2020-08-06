@@ -1,5 +1,5 @@
 name: 'mcauth'
-version: '2.2.0'
+version: '2.3.0'
 author: 'Dylan Hackworth'
 main: 'dev.dhdf.mcauth.MCAuthMain'
 api-version: '1.15'
