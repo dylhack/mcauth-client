@@ -13,7 +13,6 @@ public class MCAuthMain extends JavaPlugin {
 
             String address = config.getString("address", "127.0.0.1");
             String token = config.getString("token", "");
-            long kickDelay = config.getLong("kick_delay");
             int port = config.getInt("port", 3001);
 
             Client client = new Client(address, port, token);
