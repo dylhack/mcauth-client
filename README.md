@@ -10,26 +10,19 @@ before adding this plugin.
 
 # Setup
 
-## 1. Building
-```
-$ ./gradlew build
-```
+## 1. Download
+Download the latest mcauth-client.jar from [releases](https://github.com/dhghf/mcauth-client/releases/latest)
 
-## 2. Add to Your Server
-The build output is located in `build/libs/mcauth-client-all.jar` copy it
-to your server plugin's folder.
-
-## 3. Configure
+## 2. Configure
 The first time running your server with the plugin in your plugin's folder, it
 will generate a new default config. Here is a reference:
 ```yaml
 address: "127.0.0.1" # Where your MCAuth instance is located
 port: 3001           # MCAuth instance webserver port (See MCAuth's config.yml)
 token: ""            # MCAuth web server token (See MCAuth's config.yml)	
-kick_delay: 6        # Kick delay in seconds
 ```
 
-## 4. Setup Complete
+## Setup Complete
 Your server is now protected, just make sure MCAuth server is running otherwise
 players will not be able to join
 
