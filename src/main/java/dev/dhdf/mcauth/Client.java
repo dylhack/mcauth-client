@@ -17,7 +17,7 @@ public class Client {
     private final HttpClient client;
 
     public Client(String address, int port, String token) {
-        this.baseURL = "http://" + address + ":" + port;
+        this.baseURL = String.format("http://%s:%d", address, port);
         this.token = token;
         this.client = HttpClient.newHttpClient();
     }
