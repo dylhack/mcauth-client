@@ -11,7 +11,7 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 
 public class Client {
-    private final static Duration timeout = Duration.ofSeconds(15);
+    private final static Duration timeout = Duration.ofSeconds(5);
     private final String baseURL;
     private final String token;
     private final HttpClient client;
