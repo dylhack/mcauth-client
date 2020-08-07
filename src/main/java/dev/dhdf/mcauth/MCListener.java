@@ -25,7 +25,7 @@ public class MCListener implements Listener {
      * authorized to join.
      */
     @EventHandler
-    public void onMemberJoin(PlayerLoginEvent ev) {
+    public void onPlayerLogin(PlayerLoginEvent ev) {
         Player player = ev.getPlayer();
         String kickReason = "";
         try {
