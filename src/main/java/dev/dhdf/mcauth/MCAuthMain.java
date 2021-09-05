@@ -8,14 +8,11 @@ public class MCAuthMain extends JavaPlugin {
     @Override
     public void onEnable() {
         saveDefaultConfig();
-        FileConfiguration config = this.getConfig();
+        FileConfiguration file = this.getConfig();
+        MCAConfig config = new MCAConfig(file);
 
-        String address = config.getString("address", "127.0.0.1");
-        String token = config.getString("token", "");
-        int port = config.getInt("port", 3001);
-
-        Client client = new Client(address, port, token);
-        MCListener listener = new MCListener(client);
+        Client client = new Client(config.host, config.port, config.token);
+        MCListener listener = new MCListener(config, client);
         AltCommands altCommands = new AltCommands(client);
 
         getServer().getPluginManager().registerEvents(listener, this);
