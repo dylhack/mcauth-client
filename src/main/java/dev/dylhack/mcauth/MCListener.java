@@ -1,4 +1,4 @@
-package dev.dhdf.mcauth;
+package dev.dylhack.mcauth;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -7,7 +7,7 @@ import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.json.JSONException;
 import org.json.JSONObject;
-import dev.dhdf.mcauth.types.*;
+import dev.dylhack.mcauth.types.*;
 
 import java.net.http.HttpResponse;
 import java.util.logging.Logger;

@@ -1,4 +1,4 @@
-package dev.dhdf.mcauth.types;
+package dev.dylhack.mcauth.types;
 
 import java.lang.Exception;
 import org.json.JSONObject;

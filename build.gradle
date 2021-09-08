@@ -3,8 +3,8 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '5.2.0'
 }
 
-group 'dev.dhdf'
-version ''
+group 'dev.dylhack'
+version '3.0.0'
 
 repositories {
     mavenCentral()

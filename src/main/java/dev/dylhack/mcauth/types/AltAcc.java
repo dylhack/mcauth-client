@@ -1,4 +1,4 @@
-package dev.dhdf.mcauth.types;
+package dev.dylhack.mcauth.types;
 
 /**
  * This represents an alt account

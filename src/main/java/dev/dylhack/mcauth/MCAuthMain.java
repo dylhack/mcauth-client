@@ -1,7 +1,8 @@
-package dev.dhdf.mcauth;
+package dev.dylhack.mcauth;
 
 import java.util.logging.Logger;
 
+import dev.dylhack.mcauth.commands.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -14,7 +15,7 @@ public class MCAuthMain extends JavaPlugin {
 
         Client client = new Client(config.host, config.port, config.token);
         MCListener listener = new MCListener(this, config, client);
-        AltCommands altCommands = new AltCommands(client);
+        AltExecutor altCommands = new AltExecutor(client);
 
         // Print out the status of MCAuth
         this.status(config);

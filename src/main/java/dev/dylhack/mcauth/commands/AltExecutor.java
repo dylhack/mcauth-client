@@ -1,5 +1,6 @@
-package dev.dhdf.mcauth;
+package dev.dylhack.mcauth.commands;
 
+import dev.dylhack.mcauth.Client;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -9,12 +10,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.net.http.HttpResponse;
 
-public class AltCommands implements CommandExecutor {
+public class AltExecutor implements CommandExecutor {
     private static final String permComplaint = "You do not have permissions to run this command.";
 
     private final Client client;
 
-    public AltCommands(Client client) {
+    public AltExecutor(Client client) {
         this.client = client;
     }
 

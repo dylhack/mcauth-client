@@ -1,4 +1,4 @@
-package dev.dhdf.mcauth;
+package dev.dylhack.mcauth;
 
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.configuration.file.FileConfiguration;

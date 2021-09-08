@@ -1,4 +1,4 @@
-package dev.dhdf.mcauth;
+package dev.dylhack.mcauth;
 
 import org.bukkit.entity.Player;
 import org.json.*;
@@ -8,7 +8,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import dev.dhdf.mcauth.types.*;
+import dev.dylhack.mcauth.types.*;
 import java.time.Duration;
 
 public class Client {
