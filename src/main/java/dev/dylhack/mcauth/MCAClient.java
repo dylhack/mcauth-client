@@ -1,23 +1,27 @@
 package dev.dylhack.mcauth;
 
-import org.bukkit.entity.Player;
-import org.json.*;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
+import java.net.http.HttpRequest.Builder;
 import java.net.http.HttpResponse;
-import dev.dylhack.mcauth.types.*;
 import java.time.Duration;
 
-public class Client {
+import org.bukkit.entity.Player;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import dev.dylhack.mcauth.types.MCAException;
+import dev.dylhack.mcauth.types.PlayerDetails;
+
+public class MCAClient {
     private final static Duration timeout = Duration.ofSeconds(1);
     private final String baseURL;
     private final String token;
     private final HttpClient client;
 
-    public Client(String address, int port, String token) {
+    public MCAClient(String address, int port, String token) {
         this.baseURL = String.format("http://%s:%d", address, port);
         this.token = token;
         this.client = HttpClient.newHttpClient();
@@ -30,10 +34,12 @@ public class Client {
      * @return JSONObject (see provided link)
      * @link https://github.com/dhghf/mc-discord-auth/blob/master/docs/endpoints/Player%20Validation.md#post-isplayervalid
      */
-    public HttpResponse<String> verifyPlayer(Player player) throws IOException, InterruptedException {
+    public HttpResponse<String> verifyPlayer(
+        Player player
+    ) throws IOException, InterruptedException {
         String uuid = player.getUniqueId().toString().replace("-", "");
 
-        return this.doGetRequest(this.baseURL + "/verify/" + uuid);
+        return this.doGetRequest("/verify/" + uuid);
     }
 
     /* Alt Account Management */
@@ -44,9 +50,12 @@ public class Client {
      * @return JSONObject
      * @link https://github.com/dhghf/mc-discord-auth/blob/master/docs/endpoints/Alt%20Accounts.md#post-newalt
      */
-    public HttpResponse<String> addAltAccount(Player owner, String altName) throws IOException, InterruptedException {
+    public HttpResponse<String> addAltAccount(
+        Player owner,
+        String altName
+    ) throws IOException, InterruptedException {
         return this.doRequest(
-                this.baseURL + String.format("/alts/%s/%s", owner.getName(), altName),
+                String.format("/alts/%s/%s", owner.getName(), altName),
                 "POST"
         );
     }
@@ -58,9 +67,11 @@ public class Client {
      * @return JSONObject
      * @link https://github.com/dhghf/mc-discord-auth/blob/master/docs/endpoints/Alt%20Accounts.md#delete-delalt
      */
-    public HttpResponse<String> remAltAccount(String altName) throws IOException, InterruptedException {
+    public HttpResponse<String> remAltAccount(
+        String altName
+    ) throws IOException, InterruptedException {
         return this.doRequest(
-                this.baseURL + "/alts/" + altName,
+                "/alts/" + altName,
                 "DELETE"
         );
     }
@@ -73,21 +84,23 @@ public class Client {
      * @throws JSONException If the server doesn't recognize the owner
      * @link https://github.com/dhghf/mc-discord-auth/blob/master/docs/endpoints/Alt%20Accounts.md#get-getaltsofowner
      */
-    public HttpResponse<String> getAltsOf(String owner) throws IOException, InterruptedException {
-        return this.doGetRequest(this.baseURL + "/alts/" + owner);
+    public HttpResponse<String> getAltsOf(
+        String owner
+    ) throws IOException, InterruptedException {
+        return this.doGetRequest("/alts/" + owner);
     }
 
-    public HttpResponse<String> listAlts() throws IOException, InterruptedException {
-        return this.doGetRequest(this.baseURL + "/alts");
+    public HttpResponse<String> listAlts()
+    throws IOException, InterruptedException {
+        return this.doGetRequest("/alts");
     }
 
     public PlayerDetails getDetails(
         Player player
-    ) throws IOException, InterruptedException, MCAuthError {
+    ) throws IOException, InterruptedException, MCAException {
         String uuid = player.getUniqueId().toString().replace("-", "");
         String target = String.format(
-            "%s/details/%s",
-            this.baseURL,
+            "/details/%s",
             uuid
         );
         HttpResponse<String> resp = this.doGetRequest(target);
@@ -95,26 +108,36 @@ public class Client {
         JSONObject data = new JSONObject(body);
 
         if (data.has("errcode")) {
-            throw new MCAuthError(data);
+            throw new MCAException(data);
         }
 
         return new PlayerDetails(data);
     }
 
     /* Utility Methods */
+    private Builder getBuilder(String endpoint) {
+        String target = String.format("%s%s", this.baseURL, endpoint);
+        return HttpRequest.newBuilder()
+            .uri(URI.create(target))
+            .timeout(MCAClient.timeout)
+            .headers(
+                "Content-Type", "application/json",
+                "User-Agent", "MCAuth Client",
+                "Content-Type", "application/json",
+                "Authorization", this.token
+            );
+    }
 
     /**
      * This handles all the HTTP GET requests
      */
-    private HttpResponse<String> doGetRequest(String target) throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
-                .timeout(Client.timeout)
-                .uri(URI.create(target))
-                .header("Content-Type", "application/json")
-                .header("User-Agent", "MCAuth Client")
-                .header("Authorization", this.token)
+    private HttpResponse<String> doGetRequest(
+        String endpoint
+    ) throws IOException, InterruptedException {
+        HttpRequest request = this.getBuilder(endpoint)
                 .GET()
                 .build();
+
         return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
@@ -122,13 +145,11 @@ public class Client {
      * This does all the HTTP requests that aren't related to GET requests
      * @return JSONObject
      */
-    private HttpResponse<String> doRequest(String target, String method) throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
-                .timeout(Client.timeout)
-                .uri(URI.create(target))
-                .header("Content-Type", "application/json")
-                .header("User-Agent", "MCAuth Client")
-                .header("Authorization", this.token)
+    private HttpResponse<String> doRequest(
+        String endpoint,
+        String method
+    ) throws IOException, InterruptedException {
+        HttpRequest request = this.getBuilder(endpoint)
                 .method(method, HttpRequest.BodyPublishers.ofString(""))
                 .build();
 
