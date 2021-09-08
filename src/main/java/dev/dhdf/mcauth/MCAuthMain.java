@@ -7,9 +7,8 @@ public class MCAuthMain extends JavaPlugin {
     @SuppressWarnings("ConstantConditions")
     @Override
     public void onEnable() {
-        saveDefaultConfig();
         FileConfiguration file = this.getConfig();
-        MCAConfig config = new MCAConfig(file);
+        MCAConfig config = new MCAConfig(this, file);
 
         Client client = new Client(config.host, config.port, config.token);
         MCListener listener = new MCListener(config, client);
