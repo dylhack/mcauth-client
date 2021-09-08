@@ -1,3 +1,7 @@
 build
 .gradle
 start.sh
+bin/
+.project
+.classpath
+.settings
