@@ -4,18 +4,23 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.json.JSONException;
 import org.json.JSONObject;
 import dev.dhdf.mcauth.types.*;
 
 import java.net.http.HttpResponse;
+import java.util.logging.Logger;
 
 public class MCListener implements Listener {
+    private final JavaPlugin plugin;
+
     private final Client client;
 
     private final MCAConfig config;
 
-    public MCListener(MCAConfig config, Client client) {
+    public MCListener(JavaPlugin plugin, MCAConfig config, Client client) {
+        this.plugin = plugin;
         this.client = client;
         this.config = config;
     }
@@ -25,10 +30,15 @@ public class MCListener implements Listener {
     }
 
     public void independent(PlayerLoginEvent ev) {
+        Logger log = this.plugin.getLogger(); 
         Player player = ev.getPlayer();
         try {
+            String id = player.getUniqueId().toString().replace("-", "");
             PlayerDetails details = this.client.getDetails(player);
             boolean whitelisted = false;
+            log.info(
+                String.format("[independent] %s: %s", id, details.state)
+            );
 
             switch (details.state) {
                 // They're an administrator
@@ -68,8 +78,10 @@ public class MCListener implements Listener {
     }
 
     public void dependent(PlayerLoginEvent ev) {
+        Logger log = this.plugin.getLogger();
         Player player = ev.getPlayer();
         try {
+            String id = player.getUniqueId().toString().replace("-", "");
             HttpResponse<String> response = this.client.verifyPlayer(player);
             String body = response.body();
             JSONObject isValidRes = new JSONObject(body);
@@ -77,6 +89,9 @@ public class MCListener implements Listener {
 
             if (!isAuthorized) {
                 String reason = isValidRes.getString("reason");
+                log.info(
+                    String.format("[dependent] %s: %s", id, reason)
+                );
 
                 switch (reason) {
                     // They didn't link their Discord acc.
@@ -99,6 +114,10 @@ public class MCListener implements Listener {
                     default:
                         kick(ev, "The server is currently under maintenance.");
                 }
+            } else {
+                log.info(
+                    String.format("%s: verified", id)
+                );
             }
         } catch (JSONException err) {
             kick(ev, "Failed to communicate to mcauth, try again later.");
@@ -116,7 +135,7 @@ public class MCListener implements Listener {
      */
     @EventHandler
     public void onPlayerLogin(PlayerLoginEvent ev) {
-        if (this.config.authScheme == "dependent") {
+        if (this.config.authScheme.equals("dependent")) {
             this.dependent(ev);
         } else {
             this.independent(ev);
