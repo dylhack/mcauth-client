@@ -4,31 +4,84 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.json.JSONException;
 import org.json.JSONObject;
+import dev.dhdf.mcauth.types.*;
 
 import java.net.http.HttpResponse;
+import java.util.logging.Logger;
 
 public class MCListener implements Listener {
+    private final JavaPlugin plugin;
+
     private final Client client;
 
-    public MCListener(Client client) {
+    private final MCAConfig config;
+
+    public MCListener(JavaPlugin plugin, MCAConfig config, Client client) {
+        this.plugin = plugin;
         this.client = client;
+        this.config = config;
     }
 
     private void kick(PlayerLoginEvent loginEvent, String reason) {
         loginEvent.disallow(PlayerLoginEvent.Result.KICK_OTHER, reason);
     }
 
-    /**
-     * This handles all the join events it will check if the player joining is
-     * authorized to join.
-     */
-    @EventHandler
-    public void onPlayerLogin(PlayerLoginEvent ev) {
+    public void independent(PlayerLoginEvent ev) {
+        Logger log = this.plugin.getLogger(); 
         Player player = ev.getPlayer();
-        String kickReason = "";
         try {
+            String id = player.getUniqueId().toString().replace("-", "");
+            PlayerDetails details = this.client.getDetails(player);
+            boolean whitelisted = false;
+            log.info(
+                String.format("[independent] %s: %s", id, details.state)
+            );
+
+            switch (details.state) {
+                // They're an administrator
+                case "admin":
+                    return;
+                // MCAuth Server thinks they're whitelisted
+                case "whitelisted":
+                    return;
+                // They're an alternative account of an administrator
+                case "alt_acc":
+                    return;
+                // They need to link their account
+                case "auth_code":
+                    kick(
+                        ev,
+                        String.format(
+                            "Here is your auth code: \"%s\"",
+                            details.authCode
+                        )
+                    );
+                    return;
+            }
+
+            for (String roleId : details.roles) {
+                if (config.whitelist.contains(roleId)) {
+                    whitelisted = true;
+                    break;
+                }
+            }
+
+            if (!whitelisted) {
+                kick(ev, "You're not whitelisted.");
+            }
+        } catch (Exception err) {
+            System.out.println("Error " + err.getMessage());
+        }
+    }
+
+    public void dependent(PlayerLoginEvent ev) {
+        Logger log = this.plugin.getLogger();
+        Player player = ev.getPlayer();
+        try {
+            String id = player.getUniqueId().toString().replace("-", "");
             HttpResponse<String> response = this.client.verifyPlayer(player);
             String body = response.body();
             JSONObject isValidRes = new JSONObject(body);
@@ -36,6 +89,9 @@ public class MCListener implements Listener {
 
             if (!isAuthorized) {
                 String reason = isValidRes.getString("reason");
+                log.info(
+                    String.format("[dependent] %s: %s", id, reason)
+                );
 
                 switch (reason) {
                     // They didn't link their Discord acc.
@@ -58,6 +114,10 @@ public class MCListener implements Listener {
                     default:
                         kick(ev, "The server is currently under maintenance.");
                 }
+            } else {
+                log.info(
+                    String.format("%s: verified", id)
+                );
             }
         } catch (JSONException err) {
             kick(ev, "Failed to communicate to mcauth, try again later.");
@@ -66,6 +126,19 @@ public class MCListener implements Listener {
             kick(ev, "Failed to communicate to mcauth, try again later.");
             System.out.println("Failed to communicate with mcauth, is the configuration correct?");
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * This handles all the join events it will check if the player joining is
+     * authorized to join.
+     */
+    @EventHandler
+    public void onPlayerLogin(PlayerLoginEvent ev) {
+        if (this.config.authScheme.equals("dependent")) {
+            this.dependent(ev);
+        } else {
+            this.independent(ev);
         }
     }
 }

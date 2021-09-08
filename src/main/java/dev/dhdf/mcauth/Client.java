@@ -8,6 +8,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import dev.dhdf.mcauth.types.*;
 import java.time.Duration;
 
 public class Client {
@@ -78,6 +79,26 @@ public class Client {
 
     public HttpResponse<String> listAlts() throws IOException, InterruptedException {
         return this.doGetRequest(this.baseURL + "/alts");
+    }
+
+    public PlayerDetails getDetails(
+        Player player
+    ) throws IOException, InterruptedException, MCAuthError {
+        String uuid = player.getUniqueId().toString().replace("-", "");
+        String target = String.format(
+            "%s/details/%s",
+            this.baseURL,
+            uuid
+        );
+        HttpResponse<String> resp = this.doGetRequest(target);
+        String body = resp.body();
+        JSONObject data = new JSONObject(body);
+
+        if (data.has("errcode")) {
+            throw new MCAuthError(data);
+        }
+
+        return new PlayerDetails(data);
     }
 
     /* Utility Methods */
