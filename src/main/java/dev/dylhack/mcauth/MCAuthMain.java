@@ -13,8 +13,12 @@ public class MCAuthMain extends JavaPlugin {
         FileConfiguration file = this.getConfig();
         MCAConfig config = new MCAConfig(this, file);
 
-        Client client = new Client(config.host, config.port, config.token);
-        MCListener listener = new MCListener(this, config, client);
+        MCAClient client = new MCAClient(
+            config.host,
+            config.port,
+            config.token
+        );
+        LoginHandler listener = new LoginHandler(this, config, client);
         AltExecutor altCommands = new AltExecutor(client);
 
         // Print out the status of MCAuth
